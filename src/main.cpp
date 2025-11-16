@@ -1,4 +1,3 @@
-
 /*
  This application:
 
@@ -249,6 +248,7 @@ void loop()
     }
     if (currentScreen == SCREEN_CLOCK)
     {
+        //rtc_get_datetime(&dt); // pico RTC call
         doClockDisplay();
     }
     else if (currentScreen == SCREEN_HOME)
@@ -1872,10 +1872,10 @@ void reset_pio_y_register(PIO pio_instance, uint sm_instance)
 
 /*! \brief Converts a Unix timestamp to a datetime_t structure.
  *  \param ts The Unix timestamp (seconds since epoch).
- *  \param dt Pointer to the datetime_t structure to be filled.
+ *  \param _dt Pointer to the datetime_t structure to be filled.
  *  \return True if conversion was successful, false otherwise.
  */
-bool unix_to_datetime(const time_t ts, datetime_t* dt)
+bool unix_to_datetime(const time_t ts, datetime_t* _dt)
 {
     struct tm ti{};
     // Use gmtime_r for thread-safety
@@ -1884,19 +1884,19 @@ bool unix_to_datetime(const time_t ts, datetime_t* dt)
         return false; // Prefer to fail if gmtime_r isn't working as expected
     }
 
-    dt->year = static_cast<int16_t>(ti.tm_year + 1900);
-    dt->month = static_cast<int8_t>(ti.tm_mon + 1);
-    dt->day = static_cast<int8_t>(ti.tm_mday);
-    dt->dotw = static_cast<int8_t>(ti.tm_wday); // 0=Sunday, 1=Monday, ..., 6=Saturday
-    dt->hour = static_cast<int8_t>(ti.tm_hour);
-    dt->min = static_cast<int8_t>(ti.tm_min);
-    dt->sec = static_cast<int8_t>(ti.tm_sec);
+    _dt->year = static_cast<int16_t>(ti.tm_year + 1900);
+    _dt->month = static_cast<int8_t>(ti.tm_mon + 1);
+    _dt->day = static_cast<int8_t>(ti.tm_mday);
+    _dt->dotw = static_cast<int8_t>(ti.tm_wday); // 0=Sunday, 1=Monday, ..., 6=Saturday
+    _dt->hour = static_cast<int8_t>(ti.tm_hour);
+    _dt->min = static_cast<int8_t>(ti.tm_min);
+    _dt->sec = static_cast<int8_t>(ti.tm_sec);
     return true;
 }
 
 bool syncRTCWithDS3231()
 {
-    datetime_t dt;
+    //datetime_t dt;
     rtc_get_datetime(&dt); // pico RTC call
     if (dt.year < 2025 || dt.year > 2125) //pico rtc not set up -
     {
@@ -1905,27 +1905,26 @@ bool syncRTCWithDS3231()
         DS3231_get(&t);
         if (t.year < 2025 || t.year > 2125)
         {
-            return false; // DS3231 also not set up - return for normal handling
             setLedColor(LED_STATE_RED);
+            return false; // DS3231 also not set up - return for normal handling
         }
-        else
-        {
-            //load from DS3231 to pico RTC
-            dt.day = static_cast<int8_t>(t.mday);
-            dt.month = static_cast<int8_t>(t.mon);
-            dt.dotw = static_cast<int8_t>(t.wday);
-            dt.hour = static_cast<int8_t>(t.hour);
-            dt.min = static_cast<int8_t>(t.min);
-            dt.sec = static_cast<int8_t>(t.sec);
-            dt.year = t.year;
 
-            //set pico rtc
-            rtc_init(); // Initialize RTC
-            rtc_set_datetime(&dt);
-            rtc_get_datetime(&dt); // pico RTC call
-            setLedColor(LED_STATE_BLUE);
-            return true; //pico rtc set up from DS3231
-        }
+        //load from DS3231 to pico RTC
+        dt.day = static_cast<int8_t>(t.mday);
+        dt.month = static_cast<int8_t>(t.mon);
+        const int d = static_cast<int8_t>(t.wday) % 7;
+        dt.dotw = static_cast<int8_t>(d);
+        dt.hour = static_cast<int8_t>(t.hour);
+        dt.min = static_cast<int8_t>(t.min);
+        dt.sec = static_cast<int8_t>(t.sec);
+        dt.year = t.year;
+
+        //set pico rtc
+        rtc_init(); // Initialize RTC
+        rtc_set_datetime(&dt);
+        rtc_get_datetime(&dt); // pico RTC call
+        setLedColor(LED_STATE_BLUE);
+        return true; //pico rtc set up from DS3231
     }
     return true;
 }
@@ -2043,7 +2042,7 @@ bool syncRTCWithHost()
         {
             // Basic validation
             unix_ts += 7200L; // adjust for GMT+2 (2 * 60 * 60 = 7200 seconds.)
-            datetime_t dt;
+            //datetime_t dt;
             if (unix_to_datetime(unix_ts, &dt))
             {
                 rtc_init(); // Initialize RTC
@@ -3026,7 +3025,7 @@ void handleSerialCommands()
 // Draw the time immediately (single draw)
 void drawTimeScreen()
 {
-    datetime_t dt;
+    //datetime_t dt;
     rtc_get_datetime(&dt); // pico RTC call
 
     char buf[20];
@@ -3048,8 +3047,8 @@ void drawTimeScreen()
     // Compute centered position and draw
     int x = centerXForText(buf);
     constexpr int y = (64 - 20) / 2; // vertical center; font height = 20
-    LCD.locate(x, y); // set cursor (method name may vary)
-    LCD.print(buf); // draw text (method name may vary)
+    LCD.locate(x, y);
+    LCD.print(buf);
     LCD.copy_to_lcd();
     s_last_drawn_time = String(buf);
 
