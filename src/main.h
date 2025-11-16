@@ -158,6 +158,9 @@ static constexpr unsigned long TIME_SCREEN_REFRESH_MS = 500;
 static unsigned long s_last_time_update = 0;
 static String s_last_drawn_time = "";
 
+inline datetime_t dt;
+
+
 // Functions
 void resetInactivityTimer();
 void drawScreenBorder();
@@ -181,7 +184,7 @@ void typeOut();
 void reset_pio_y_register(PIO pio_instance, uint sm_instance);
 bool syncRTCWithDS3231();
 bool syncRTCWithHost();
-bool unix_to_datetime(time_t ts, datetime_t *dt);
+bool unix_to_datetime(time_t ts, datetime_t *_dt);
 bool handlePinEntry(); // Function to manage PIN input
 bool askToUpdatePin(); // Asks user if they want to update the PIN
 bool performPinUpdateProcess(); // Handles the new PIN entry and saving
