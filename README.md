@@ -58,8 +58,6 @@ Added the installer for the DataSafePlus utility program. (setup.exe and DataSaf
  5) This app can only connect to the device when the device is showing the clock screen.
  6) After connection, the user should enter the site listing screen. The host app can communicate with the device only while the site list screen is active.
 
-    NOTE: I am busy writing an installer for the DataSafePlus utility. I will post this asap.
-
     Please excuse my coding style, I am not a trained programmer. Any improvements/mods would be appreciated.
     
     
