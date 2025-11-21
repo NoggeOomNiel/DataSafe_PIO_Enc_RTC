@@ -1,6 +1,6 @@
 Please Note: This project is still Work In Progress!!!
 
-Added images and GCODE files for the 3D printing the project box. 
+Added images and GCODE files for 3D printing the project box. 
 Added the installer for the DataSafePlus utility program. (setup.exe and DataSafePlus Installer.msi)
 
  This application:
