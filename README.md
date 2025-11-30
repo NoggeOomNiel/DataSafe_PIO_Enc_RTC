@@ -1,5 +1,10 @@
 Please Note: This project is still Work In Progress!!!
 
+30-11-2025 Redesigned the complete project - refactored to eliminate usage of arduino String class.
+Redesigned structure to implement handler classes.
+TODO: Implement propper encrytion for data on SD card.
+
+
 Added images and GCODE files for 3D printing the project box. 
 Added the installer for the DataSafePlus utility program. (setup.exe and DataSafePlus Installer.msi)
 
