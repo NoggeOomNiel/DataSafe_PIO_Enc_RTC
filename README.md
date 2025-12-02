@@ -1,6 +1,4 @@
 
-This application:
-
 This is a short description of the device and how to use it.
 Purpose:
 
