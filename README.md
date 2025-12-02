@@ -136,7 +136,8 @@ Parts list:
 
 The schematic diagram is available in the Github repository.
 
-PS: I will publish the source code for the host pc application as well as soon as possible.
+PS: I provided the zip file for the DataSafePlus host program. This app was written in vb.net on Visual Studio 2026.
+The app solution can easily be ported to c# using an AI provider if needed.
 
 
 
